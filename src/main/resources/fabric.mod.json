@@ -1,27 +1,24 @@
 {
 	"schemaVersion": 1,
-	"id": "template-mod",
+	"id": "gatedwarp",
 	"version": "${version}",
-	"name": "Template Mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "GatedWarp",
+	"description": "Op-defined warps that ordinary players can use without vanilla /tp permission.",
 	"authors": [
-		"Me!"
+		"Anton Sakhanovych"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/antonsakhanovych",
+		"sources": "https://github.com/antonsakhanovych/gatedwarp"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/template-mod/icon.png",
-	"environment": "*",
+	"icon": "assets/gatedwarp/icon.png",
+	"environment": "server",
 	"entrypoints": {
 		"main": [
-			"com.example.TemplateMod"
+			"com.github.antonsakhanovych.gatedwarp.GatedWarp"
 		]
 	},
-	"mixins": [
-		"template-mod.mixins.json"
-	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.3",
