@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GatedWarpConfigTest {
@@ -27,7 +28,15 @@ class GatedWarpConfigTest {
 		assertEquals(3, config.warmupSeconds());
 		assertEquals(10, config.combatTagSeconds());
 		assertEquals(4.0, config.snapRadius());
+		assertFalse(config.requirePermissionToWarp());
 		assertTrue(Files.exists(file));
+	}
+
+	@Test
+	void requirePermissionToWarpCanBeEnabled() throws IOException {
+		Path file = dir.resolve("gatedwarp.json");
+		Files.writeString(file, "{\"requirePermissionToWarp\": true}");
+		assertTrue(GatedWarpConfig.load(file, LOGGER).requirePermissionToWarp());
 	}
 
 	@Test

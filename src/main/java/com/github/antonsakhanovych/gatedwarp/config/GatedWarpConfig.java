@@ -21,6 +21,12 @@ public final class GatedWarpConfig {
 	int warmupSeconds = 3;
 	int combatTagSeconds = 10;
 	double snapRadius = 4.0;
+	boolean requirePermissionToWarp = false;
+
+	/** When true, only players granted the gatedwarp:use permission (and admins) can use warps. */
+	public boolean requirePermissionToWarp() {
+		return requirePermissionToWarp;
+	}
 
 	public int cooldownSeconds() {
 		return cooldownSeconds;

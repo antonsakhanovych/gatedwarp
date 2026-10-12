@@ -11,23 +11,28 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.function.Predicate;
+
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
 /**
  * Registers the Brigadier nodes and nothing else. Op-only commands carry {@link Perms#ADMIN} in
  * {@code requires()}, so they are hidden from tab completion and refused on execution. The player
- * commands have no requirement, so every player can run them.
+ * commands use the {@code canUse} predicate, which lets everyone in unless the config asks for an
+ * explicit grant of the use permission.
  */
 public final class Commands {
 	private final WarpRegistry registry;
 	private final WarpAdmin admin;
 	private final TeleportService teleports;
+	private final Predicate<CommandSourceStack> canUse;
 
-	public Commands(WarpRegistry registry, WarpAdmin admin, TeleportService teleports) {
+	public Commands(WarpRegistry registry, WarpAdmin admin, TeleportService teleports, Predicate<CommandSourceStack> canUse) {
 		this.registry = registry;
 		this.admin = admin;
 		this.teleports = teleports;
+		this.canUse = canUse;
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -36,13 +41,16 @@ public final class Commands {
 
 		// Player commands.
 		dispatcher.register(literal("warp")
+			.requires(canUse)
 			.then(warpName("name", warpNames)
 				.executes(context -> withPlayer(context, player -> teleports.warpByName(player, name(context))))));
 
 		dispatcher.register(literal("warps")
+			.requires(canUse)
 			.executes(context -> list(context)));
 
 		dispatcher.register(literal("warptp")
+			.requires(canUse)
 			.then(argument("pos", Vec3Argument.vec3(false))
 				.executes(context -> withPlayer(context, player ->
 					teleports.warpNear(player, Vec3Argument.getVec3(context, "pos"))))));

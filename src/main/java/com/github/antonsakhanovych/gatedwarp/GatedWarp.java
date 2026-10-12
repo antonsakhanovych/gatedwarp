@@ -25,7 +25,8 @@ public class GatedWarp implements ModInitializer {
 		GatedWarpConfig config = GatedWarpConfig.load(configDir.resolve("gatedwarp.json"), LOGGER);
 		WarpRegistry registry = new WarpRegistry(configDir.resolve("warps.json"), LOGGER);
 		TeleportService teleports = new TeleportService(registry, config);
-		Commands commands = new Commands(registry, new WarpAdmin(registry, LOGGER), teleports);
+		Commands commands = new Commands(registry, new WarpAdmin(registry, LOGGER), teleports,
+			Perms.use(config.requirePermissionToWarp()));
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> commands.register(dispatcher));
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> registry.load());

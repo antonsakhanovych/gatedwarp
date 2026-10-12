@@ -24,6 +24,18 @@ class PermsTest {
 	}
 
 	@Test
+	void everyoneMayUseWarpsByDefault() {
+		assertTrue(Perms.canUse(subjectAt(PermissionLevel.ALL), false));
+	}
+
+	@Test
+	void whenAGrantIsRequiredOnlyAdminsPassWithoutOne() {
+		assertFalse(Perms.canUse(subjectAt(PermissionLevel.ALL), true));
+		assertFalse(Perms.canUse(subjectAt(PermissionLevel.MODERATORS), true));
+		assertTrue(Perms.canUse(subjectAt(PermissionLevel.GAMEMASTERS), true));
+	}
+
+	@Test
 	void opLevelTwoAndAboveAreAdmins() {
 		assertTrue(Perms.isAdmin(subjectAt(PermissionLevel.GAMEMASTERS)));
 		assertTrue(Perms.isAdmin(subjectAt(PermissionLevel.ADMINS)));

@@ -61,6 +61,9 @@ public final class TeleportService {
 	}
 
 	private int begin(ServerPlayer player, Warp warp) {
+		if (!Perms.canUse(player, config.requirePermissionToWarp())) {
+			return fail(player, "You do not have permission to use warps.");
+		}
 		MinecraftServer server = player.level().getServer();
 		if (resolveLevel(server, warp) == null) {
 			return fail(player, "The dimension of warp '" + warp.name() + "' (" + warp.dimension() + ") is not loaded.");
