@@ -30,7 +30,7 @@ public final class TeleportService {
 	/** How far a player may drift during warmup before it counts as moving. */
 	private static final double MOVE_TOLERANCE_SQ = 0.1 * 0.1;
 
-	private record Pending(String warpName, ResourceKey<Level> dimension, Vec3 origin, long endTick) {
+	private record Pending(ServerPlayer player, String warpName, ResourceKey<Level> dimension, Vec3 origin, long endTick) {
 	}
 
 	private final WarpRegistry registry;
@@ -88,7 +88,7 @@ public final class TeleportService {
 		if (warmupSeconds == 0) {
 			return teleport(player, warp, now);
 		}
-		pending.put(id, new Pending(warp.name(), player.level().dimension(), player.position(), now + (long) warmupSeconds * TICKS_PER_SECOND));
+		pending.put(id, new Pending(player, warp.name(), player.level().dimension(), player.position(), now + (long) warmupSeconds * TICKS_PER_SECOND));
 		player.sendSystemMessage(WarpMessages.info("Warping to " + warp.name() + " in " + warmupSeconds + "s. Stand still."));
 		return 1;
 	}
@@ -119,12 +119,11 @@ public final class TeleportService {
 	/** Ticks the warmups: cancels on movement, counts down, and teleports when the time is up. */
 	public void onTick(MinecraftServer server) {
 		long now = server.getTickCount();
-		Iterator<Map.Entry<UUID, Pending>> it = pending.entrySet().iterator();
+		Iterator<Pending> it = pending.values().iterator();
 		while (it.hasNext()) {
-			Map.Entry<UUID, Pending> entry = it.next();
-			Pending warmup = entry.getValue();
-			ServerPlayer player = server.getPlayerList().getPlayer(entry.getKey());
-			if (player == null || !player.isAlive()) {
+			Pending warmup = it.next();
+			ServerPlayer player = warmup.player();
+			if (player.hasDisconnected() || !player.isAlive()) {
 				it.remove();
 				continue;
 			}
