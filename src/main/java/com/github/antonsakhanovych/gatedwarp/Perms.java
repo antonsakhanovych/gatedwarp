@@ -1,23 +1,37 @@
 package com.github.antonsakhanovych.gatedwarp;
 
+import net.fabricmc.fabric.api.permission.v1.PermissionContextOwner;
+import net.fabricmc.fabric.api.permission.v1.PermissionPredicates;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.permissions.PermissionSet;
-import net.minecraft.server.permissions.Permissions;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.PermissionLevel;
 
 import java.util.function.Predicate;
 
 /**
- * The one place that decides who counts as an admin: vanilla op level 2 (gamemaster).
- * Used both for hiding commands via {@code requires()} and for bypassing warp limits.
+ * Permission nodes, via Fabric API's permission API. With no permission provider installed each
+ * node falls back to vanilla op level 2 (gamemaster). A provider such as LuckPerms may grant or
+ * revoke the nodes per player.
  */
 public final class Perms {
+	/** Create, delete, rename and inspect warps. */
+	public static final Identifier ADMIN_NODE = Identifier.fromNamespaceAndPath(GatedWarp.MOD_ID, "admin");
+	/** Skip the cooldown, the warmup and the combat tag. */
+	public static final Identifier BYPASS_NODE = Identifier.fromNamespaceAndPath(GatedWarp.MOD_ID, "bypass");
+
+	static final PermissionLevel FALLBACK = PermissionLevel.GAMEMASTERS;
+
 	/** For {@code .requires()}: hides the command from tab completion and refuses execution. */
-	public static final Predicate<CommandSourceStack> ADMIN = source -> isAdmin(source.permissions());
+	public static final Predicate<CommandSourceStack> ADMIN = PermissionPredicates.require(ADMIN_NODE, FALLBACK);
 
 	private Perms() {
 	}
 
-	public static boolean isAdmin(PermissionSet permissions) {
-		return permissions.hasPermission(Permissions.COMMANDS_GAMEMASTER);
+	public static boolean isAdmin(PermissionContextOwner subject) {
+		return subject.checkPermission(ADMIN_NODE, FALLBACK);
+	}
+
+	public static boolean canBypassLimits(PermissionContextOwner subject) {
+		return subject.checkPermission(BYPASS_NODE, FALLBACK);
 	}
 }

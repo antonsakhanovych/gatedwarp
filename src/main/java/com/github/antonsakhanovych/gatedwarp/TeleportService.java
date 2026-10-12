@@ -68,7 +68,7 @@ public final class TeleportService {
 
 		UUID id = player.getUUID();
 		long now = server.getTickCount();
-		boolean bypass = Perms.isAdmin(player.permissions());
+		boolean bypass = Perms.canBypassLimits(player);
 
 		if (!bypass) {
 			if (pending.containsKey(id)) {
@@ -104,7 +104,7 @@ public final class TeleportService {
 			return fail(player, "The teleport to '" + warp.name() + "' was refused.");
 		}
 		player.resetFallDistance();
-		if (!Perms.isAdmin(player.permissions())) {
+		if (!Perms.canBypassLimits(player)) {
 			cooldownUntil.put(player.getUUID(), now + (long) config.cooldownSeconds() * TICKS_PER_SECOND);
 		}
 		player.sendSystemMessage(WarpMessages.info("Warped to " + warp.name() + "."));

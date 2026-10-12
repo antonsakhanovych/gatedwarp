@@ -102,7 +102,7 @@ public final class WarpAdmin {
 		Component broadcast = Component.literal("[GatedWarp] " + line).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
 		ServerPlayer actor = source.getPlayer();
 		for (ServerPlayer other : source.getServer().getPlayerList().getPlayers()) {
-			if (other != actor && Perms.isAdmin(other.permissions())) {
+			if (other != actor && Perms.isAdmin(other)) {
 				other.sendSystemMessage(broadcast);
 			}
 		}

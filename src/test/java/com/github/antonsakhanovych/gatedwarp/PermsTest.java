@@ -1,30 +1,33 @@
 package com.github.antonsakhanovych.gatedwarp;
 
-import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.fabricmc.fabric.api.permission.v1.PermissionContext;
 import net.minecraft.server.permissions.PermissionLevel;
-import net.minecraft.server.permissions.PermissionSet;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** The permission fallback: with no provider installed, the nodes mean "op level 2 or higher". */
 class PermsTest {
-	private static boolean adminAt(PermissionLevel level) {
-		return Perms.isAdmin(LevelBasedPermissionSet.forLevel(level));
+	private static PermissionContext subjectAt(PermissionLevel level) {
+		return PermissionContext.create(UUID.randomUUID(), PermissionContext.Type.PLAYER, level);
 	}
 
 	@Test
 	void ordinaryPlayersAndModeratorsAreNotAdmins() {
-		assertFalse(adminAt(PermissionLevel.ALL));
-		assertFalse(adminAt(PermissionLevel.MODERATORS));
-		assertFalse(Perms.isAdmin(PermissionSet.NO_PERMISSIONS));
+		assertFalse(Perms.isAdmin(subjectAt(PermissionLevel.ALL)));
+		assertFalse(Perms.isAdmin(subjectAt(PermissionLevel.MODERATORS)));
+		assertFalse(Perms.canBypassLimits(subjectAt(PermissionLevel.ALL)));
+		assertFalse(Perms.canBypassLimits(subjectAt(PermissionLevel.MODERATORS)));
 	}
 
 	@Test
 	void opLevelTwoAndAboveAreAdmins() {
-		assertTrue(adminAt(PermissionLevel.GAMEMASTERS));
-		assertTrue(adminAt(PermissionLevel.ADMINS));
-		assertTrue(adminAt(PermissionLevel.OWNERS));
-		assertTrue(Perms.isAdmin(PermissionSet.ALL_PERMISSIONS));
+		assertTrue(Perms.isAdmin(subjectAt(PermissionLevel.GAMEMASTERS)));
+		assertTrue(Perms.isAdmin(subjectAt(PermissionLevel.ADMINS)));
+		assertTrue(Perms.isAdmin(subjectAt(PermissionLevel.OWNERS)));
+		assertTrue(Perms.canBypassLimits(subjectAt(PermissionLevel.GAMEMASTERS)));
 	}
 }
