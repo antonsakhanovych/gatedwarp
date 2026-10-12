@@ -28,6 +28,15 @@ test {
 	useJUnitPlatform()
 }
 
+// Game tests run a real dedicated server with mock players (./gradlew runGametest).
+// They live in src/gametest and are never packaged into the mod jar.
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "gatedwarp-gametest"
+		eula = true	}
+}
+
 processResources {
 	def version = project.version
 	inputs.property "version", version
