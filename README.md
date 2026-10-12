@@ -32,7 +32,7 @@ Admin and bypass fall back to op level 2 when no permission mod answers. LuckPer
 
 ## Config
 
-`config/gatedwarp.json` is created on first start.
+`config/gatedwarp/config.json` is created on first start. Files from version 1.0.0 (`config/gatedwarp.json` and `config/warps.json`) are moved into `config/gatedwarp/` automatically.
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -46,7 +46,7 @@ Moving or taking damage during the warmup cancels the warp.
 
 ## Install
 
-You need Java 25, Fabric Loader 0.19.5 or newer, and Fabric API. Put the jar in `mods` on the server. Warps are saved to `config/warps.json`.
+You need Java 25, Fabric Loader 0.19.5 or newer, and Fabric API. Put the jar in `mods` on the server. Warps are saved to `config/gatedwarp/warps.json`.
 
 ## Build
 
